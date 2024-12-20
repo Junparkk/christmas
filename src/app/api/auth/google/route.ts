@@ -27,7 +27,6 @@ export async function POST(req: NextRequest) {
         },
       }
     );
-    console.log("====", tokenResponse.data);
 
     const access_token = tokenResponse.data.access_token;
 
@@ -56,9 +55,10 @@ export async function POST(req: NextRequest) {
     // 신규 유저
     if (!getUser) {
       // INSERT 쿼리 실행 후 새로 생성된 유저 정보 조회
-      await getSingleRow("INSERT INTO users (google_id) VALUES (?)", [
-        googleUserInfo.id,
-      ]);
+      await getSingleRow(
+        "INSERT INTO users (google_id, status) VALUES (?, ?)",
+        [googleUserInfo.id, "REGISTERING"]
+      );
 
       // 새로 생성된 유저 정보 조회
       const newUser = await getSingleRow<User & RowDataPacket>(
